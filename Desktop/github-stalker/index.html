@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>GitHub Stalker</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+</head>
+
+<body class="bg-dark text-white p-5">
+    <div class="container text-center" style="max-width: 500px;">
+        <h1 class="text-info mb-4">GitHub Stalker</h1>
+        <input type="text" id="in-user" class="form-control mb-3" placeholder="Digite o username (Ex: diego3g, filipedeschamps)">
+        <button onclick="buscarUsuario()" class="btn btn-info w-100 mb-4">Vasculhar Servidor</button>
+        <div id="loading" class="spinner-border text-info d-none mb-3" role="status"></div>
+        <div id="resultado"></div>
+    </div>
+
+    <script>
+        async function buscarUsuario(){
+            let username = document.getElementById('in-user').value;
+            let divResultado = document.getElementById('resultado');
+            let loading = document.getElementById('loading');
+
+        // Limpa a tela antiga e mostra a bolinha rodando.
+            
+            divResultado.innerHTML="";
+            loading.classList.remove('d-none'); // tira o display:nome do bootstrap
+        
+
+        // Tente rodar isso. Se explodir, pule para o CATCH!
+
+            try {
+                let resposta = await fetch(`https://api.github.com/users/${username}`);
+            
+        // O Fetch não dá erro direto se o usuário não existir (dá o erro código 404).
+        // Precisamos FORÇAR um erro manualmente se a resposta não for "OK".
+            if (!resposta.ok){
+                throw new Error("Usuário não encontrado no GitHub");
+            }
+            let dados = await resposta.json();
+
+            divResultado.innerHTML=`
+                <div class="card bg-secondary p-3">
+                    <img src="${dados.avatar_url}" width="120" class="rounded-circle mx-auto mb-3">
+                    <h3>${dados.nome || username}</h3>
+                    <p>Seguidores: ${dados.followers}</p>
+                </div>
+            `;
+            } catch (erroTratado){
+        // Se explodiu o TRY, o site não trava. Ele cai aqui!
+            console.error(erroTratado);
+            divResultado.innerHTML=`
+                <div class="alert alert-danger">${erroTratado.message}</div>`;
+            } finally {
+        // Dando certo ou errado, essa linha RODA SEMPRE no final.
+        // Ótima para desligar o aviso de "Carregando..."
+            loading.classList.add('d-none'); // Esconde o spinner
+            }
+        }   
+
+    </script>
+</body>
+
+</html>
