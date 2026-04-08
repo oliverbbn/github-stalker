@@ -21,7 +21,10 @@
             let username = document.getElementById('in-user').value;
             let divResultado = document.getElementById('resultado');
             let loading = document.getElementById('loading');
-
+            
+            if (username == ""){
+                throw new Error("Por favor, digite um nome de usuário");
+            }
         // Limpa a tela antiga e mostra a bolinha rodando.
             
             divResultado.innerHTML="";
@@ -43,7 +46,7 @@
             divResultado.innerHTML=`
                 <div class="card bg-secondary p-3">
                     <img src="${dados.avatar_url}" width="120" class="rounded-circle mx-auto mb-3">
-                    <h3>${dados.nome || username}</h3>
+                    <h3>${dados.name || username}</h3>
                     <p>Seguidores: ${dados.followers}</p>
                 </div>
             `;
